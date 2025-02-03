@@ -4,12 +4,19 @@
 .modal-content:not(.settings-disabled-scrollbar)::-webkit-scrollbar,
 .vertical-tabs-container::-webkit-scrollbar,
 .vertical-tab-header::-webkit-scrollbar,
-.vertical-tab-content::-webkit-scrollbar {
+.vertical-tab-content::-webkit-scrollbar,
+.markdown-preview-view pre code::-webkit-scrollbar {
     visibility: hidden;
     background-color: transparent;
     width: var(--scrollbar-width, 8px);
+    height: var(--scrollbar-width, 8px);
     scrollbar-color: var(--scrollbar-color, #6790E3) transparent;
     transition: visibility 0.1s ease;
+}
+
+/* Hide vertical scrollbar for code blocks */
+.markdown-preview-view pre code::-webkit-scrollbar:vertical {
+    width: 0;
 }
 
 .cm-scroller::-webkit-scrollbar-thumb,
@@ -18,7 +25,8 @@
 .modal-content:not(.settings-disabled-scrollbar)::-webkit-scrollbar-thumb,
 .vertical-tabs-container::-webkit-scrollbar-thumb,
 .vertical-tab-header::-webkit-scrollbar-thumb,
-.vertical-tab-content::-webkit-scrollbar-thumb {
+.vertical-tab-content::-webkit-scrollbar-thumb,
+.markdown-preview-view pre code::-webkit-scrollbar-thumb {
     visibility: hidden;
     background-color: var(--scrollbar-color, #6790E3);
     border-radius: var(--scrollbar-width, 8px);
@@ -59,7 +67,12 @@
 .vertical-tab-content.scrolling::-webkit-scrollbar,
 .vertical-tab-content.scrolling::-webkit-scrollbar-thumb,
 .vertical-tab-content::-webkit-scrollbar:hover,
-.vertical-tab-content::-webkit-scrollbar-thumb:hover {
+.vertical-tab-content::-webkit-scrollbar-thumb:hover,
+
+.markdown-preview-view pre code.scrolling::-webkit-scrollbar,
+.markdown-preview-view pre code.scrolling::-webkit-scrollbar-thumb,
+.markdown-preview-view pre code::-webkit-scrollbar:hover,
+.markdown-preview-view pre code::-webkit-scrollbar-thumb:hover {
     visibility: visible;
 }
 
