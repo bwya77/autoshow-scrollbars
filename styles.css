@@ -1,0 +1,56 @@
+.auto-hide-scrollbar::-webkit-scrollbar,
+.modal-content:not(.settings-disabled-scrollbar)::-webkit-scrollbar,
+.vertical-tabs-container::-webkit-scrollbar,
+.vertical-tab-header::-webkit-scrollbar,
+.vertical-tab-content-container::-webkit-scrollbar,
+.vertical-tab-content::-webkit-scrollbar,
+.nav-files-container::-webkit-scrollbar {
+    visibility: hidden;
+    background-color: transparent;
+    width: var(--scrollbar-width, 8px);
+    scrollbar-color: var(--scrollbar-color, #6790E3) transparent;
+    transition: visibility 0.1s ease;
+}
+
+.auto-hide-scrollbar::-webkit-scrollbar-thumb,
+.modal-content:not(.settings-disabled-scrollbar)::-webkit-scrollbar-thumb,
+.vertical-tabs-container::-webkit-scrollbar-thumb,
+.vertical-tab-header::-webkit-scrollbar-thumb,
+.vertical-tab-content-container::-webkit-scrollbar-thumb,
+.vertical-tab-content::-webkit-scrollbar-thumb,
+.nav-files-container::-webkit-scrollbar-thumb {
+    visibility: hidden;
+    background-color: var(--scrollbar-color, #6790E3);
+    border-radius: var(--scrollbar-width, 8px);
+    transition: visibility 0.1s ease;
+}
+
+.auto-hide-scrollbar.scrolling::-webkit-scrollbar,
+.auto-hide-scrollbar.scrolling::-webkit-scrollbar-thumb,
+.auto-hide-scrollbar::-webkit-scrollbar:hover,
+.auto-hide-scrollbar::-webkit-scrollbar-thumb:hover,
+.modal-content:not(.settings-disabled-scrollbar):hover::-webkit-scrollbar,
+.modal-content:not(.settings-disabled-scrollbar):hover::-webkit-scrollbar-thumb,
+.modal-content:hover::-webkit-scrollbar,
+.modal-content:hover::-webkit-scrollbar-thumb,
+.vertical-tabs-container:hover::-webkit-scrollbar,
+.vertical-tabs-container:hover::-webkit-scrollbar-thumb,
+.vertical-tab-header:hover::-webkit-scrollbar,
+.vertical-tab-header:hover::-webkit-scrollbar-thumb,
+.vertical-tab-content-container:hover::-webkit-scrollbar,
+.vertical-tab-content-container:hover::-webkit-scrollbar-thumb,
+.vertical-tab-content:hover::-webkit-scrollbar,
+.vertical-tab-content:hover::-webkit-scrollbar-thumb,
+.nav-files-container:hover::-webkit-scrollbar,
+.nav-files-container:hover::-webkit-scrollbar-thumb {
+    visibility: visible;
+}
+
+.settings-disabled-scrollbar::-webkit-scrollbar,
+.settings-disabled-scrollbar::-webkit-scrollbar-thumb {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+
+
