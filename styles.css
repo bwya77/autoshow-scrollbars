@@ -1,3 +1,9 @@
+/* Base scrollbar styles */
+:root {
+    --scrollbar-color: var(--interactive-accent, #6790E3);
+}
+
+/* Base scrollbar styling */
 .cm-scroller::-webkit-scrollbar,
 .markdown-preview-view::-webkit-scrollbar,
 .nav-files-container::-webkit-scrollbar,
@@ -8,9 +14,9 @@
 .markdown-preview-view pre code::-webkit-scrollbar {
     visibility: hidden;
     background-color: transparent;
-    width: var(--scrollbar-width, 8px);
-    height: var(--scrollbar-width, 8px);
-    scrollbar-color: var(--scrollbar-color, #6790E3) transparent;
+    width: 8px;
+    height: 8px;
+    scrollbar-color: var(--scrollbar-color) transparent;
     transition: visibility 0.1s ease;
 }
 
@@ -19,6 +25,7 @@
     width: 0;
 }
 
+/* Scrollbar thumb styles */
 .cm-scroller::-webkit-scrollbar-thumb,
 .markdown-preview-view::-webkit-scrollbar-thumb,
 .nav-files-container::-webkit-scrollbar-thumb,
@@ -28,57 +35,28 @@
 .vertical-tab-content::-webkit-scrollbar-thumb,
 .markdown-preview-view pre code::-webkit-scrollbar-thumb {
     visibility: hidden;
-    background-color: var(--scrollbar-color, #6790E3);
-    border-radius: var(--scrollbar-width, 8px);
+    background-color: var(--scrollbar-color) !important;
+    border-radius: 8px;
     transition: visibility 0.1s ease;
 }
 
-/* Show scrollbar when scrolling or hovering directly on scrollbar */
-.cm-scroller.scrolling::-webkit-scrollbar,
-.cm-scroller.scrolling::-webkit-scrollbar-thumb,
-.cm-scroller::-webkit-scrollbar:hover,
-.cm-scroller::-webkit-scrollbar-thumb:hover,
-
-.markdown-preview-view.scrolling::-webkit-scrollbar,
-.markdown-preview-view.scrolling::-webkit-scrollbar-thumb,
-.markdown-preview-view::-webkit-scrollbar:hover,
-.markdown-preview-view::-webkit-scrollbar-thumb:hover,
-
-.nav-files-container.scrolling::-webkit-scrollbar,
-.nav-files-container.scrolling::-webkit-scrollbar-thumb,
-.nav-files-container::-webkit-scrollbar:hover,
-.nav-files-container::-webkit-scrollbar-thumb:hover,
-
-.modal-content:not(.settings-disabled-scrollbar).scrolling::-webkit-scrollbar,
-.modal-content:not(.settings-disabled-scrollbar).scrolling::-webkit-scrollbar-thumb,
-.modal-content:not(.settings-disabled-scrollbar)::-webkit-scrollbar:hover,
-.modal-content:not(.settings-disabled-scrollbar)::-webkit-scrollbar-thumb:hover,
-
-.vertical-tabs-container.scrolling::-webkit-scrollbar,
-.vertical-tabs-container.scrolling::-webkit-scrollbar-thumb,
-.vertical-tabs-container::-webkit-scrollbar:hover,
-.vertical-tabs-container::-webkit-scrollbar-thumb:hover,
-
-.vertical-tab-header.scrolling::-webkit-scrollbar,
-.vertical-tab-header.scrolling::-webkit-scrollbar-thumb,
-.vertical-tab-header::-webkit-scrollbar:hover,
-.vertical-tab-header::-webkit-scrollbar-thumb:hover,
-
-.vertical-tab-content.scrolling::-webkit-scrollbar,
-.vertical-tab-content.scrolling::-webkit-scrollbar-thumb,
-.vertical-tab-content::-webkit-scrollbar:hover,
-.vertical-tab-content::-webkit-scrollbar-thumb:hover,
-
-.markdown-preview-view pre code.scrolling::-webkit-scrollbar,
-.markdown-preview-view pre code.scrolling::-webkit-scrollbar-thumb,
-.markdown-preview-view pre code::-webkit-scrollbar:hover,
-.markdown-preview-view pre code::-webkit-scrollbar-thumb:hover {
+/* Show scrollbar only when actively scrolling or hovering the scrollbar itself */
+.auto-hide-scrollbar .scrolling::-webkit-scrollbar,
+.auto-hide-scrollbar .scrolling::-webkit-scrollbar-thumb,
+.auto-hide-scrollbar *::-webkit-scrollbar:hover,
+.auto-hide-scrollbar *::-webkit-scrollbar-thumb:hover {
     visibility: visible;
 }
 
+/* Disabled scrollbar styles */
 .settings-disabled-scrollbar::-webkit-scrollbar,
 .settings-disabled-scrollbar::-webkit-scrollbar-thumb {
     display: none !important;
     width: 0 !important;
     height: 0 !important;
+}
+
+/* Custom scrollbar color override */
+.auto-hide-scrollbar[data-scrollbar-color] *::-webkit-scrollbar-thumb {
+    background-color: var(--custom-scrollbar-color) !important;
 }

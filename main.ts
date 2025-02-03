@@ -1,17 +1,15 @@
-import { App, Plugin, PluginSettingTab, Setting, WorkspaceLeaf } from 'obsidian';
+import { App, Plugin, PluginSettingTab, Setting } from 'obsidian';
 
 interface ScrollbarSettings {
     hideDelay: number;
     showDelay: number;
-    color: string;
-    width: number;
+    color: string | null; // null means use accent color
 }
 
 const DEFAULT_SETTINGS: ScrollbarSettings = {
     hideDelay: 750,
     showDelay: 0,
-    color: '#6790E3',
-    width: 8
+    color: null // Default to using accent color
 }
 
 export class ScrollPlugin {
@@ -27,19 +25,23 @@ export class ScrollPlugin {
 
     public updateSettings(settings: ScrollbarSettings): void {
         this.settings = settings;
-        this.updateStyles();
+        this.updateScrollbarColor();
     }
 
-    private updateStyles(): void {
-        document.documentElement.style.setProperty('--scrollbar-width', `${this.settings.width}px`);
-        document.documentElement.style.setProperty('--scrollbar-color', this.settings.color);
+    private updateScrollbarColor(): void {
+        if (this.settings.color) {
+            document.body.setAttribute('data-scrollbar-color', '');
+            document.documentElement.style.setProperty('--custom-scrollbar-color', this.settings.color);
+        } else {
+            document.body.removeAttribute('data-scrollbar-color');
+            document.documentElement.style.removeProperty('--custom-scrollbar-color');
+        }
     }
 
     private initForWorkspace(): void {
-        this.updateStyles();
+        this.updateScrollbarColor();
         document.body.classList.add('auto-hide-scrollbar');
         
-        // Use capture phase to catch all scroll events
         document.addEventListener('scroll', this.boundHandleScroll, { 
             capture: true,
             passive: true 
@@ -56,7 +58,6 @@ export class ScrollPlugin {
             window.clearTimeout(timeoutId);
         }
 
-        // Add scrolling class after delay
         if (this.settings.showDelay > 0) {
             setTimeout(() => {
                 container.classList.add('scrolling');
@@ -65,7 +66,6 @@ export class ScrollPlugin {
             container.classList.add('scrolling');
         }
 
-        // Set timeout to remove scrolling class
         const newTimeoutId = window.setTimeout(() => {
             container.classList.remove('scrolling');
             this.timeouts.delete(container);
@@ -78,7 +78,6 @@ export class ScrollPlugin {
         document.body.classList.remove('auto-hide-scrollbar');
         document.removeEventListener('scroll', this.boundHandleScroll, true);
         
-        // Clear all timeouts
         document.querySelectorAll('.scrolling').forEach(el => {
             el.classList.remove('scrolling');
             const timeoutId = this.timeouts.get(el);
@@ -87,99 +86,101 @@ export class ScrollPlugin {
             }
         });
         
-        // Remove CSS variables
-        document.documentElement.style.removeProperty('--scrollbar-width');
-        document.documentElement.style.removeProperty('--scrollbar-color');
+        document.body.removeAttribute('data-scrollbar-color');
+        document.documentElement.style.removeProperty('--custom-scrollbar-color');
     }
 }
+
 export class ScrollbarSettingTab extends PluginSettingTab {
-   plugin: AutoShowScrollbarsPlugin;
+    plugin: AutoShowScrollbarsPlugin;
 
-   constructor(app: App, plugin: AutoShowScrollbarsPlugin) {
-       super(app, plugin);
-       this.plugin = plugin;
-   }
+    constructor(app: App, plugin: AutoShowScrollbarsPlugin) {
+        super(app, plugin);
+        this.plugin = plugin;
+    }
 
-   display(): void {
-       const { containerEl } = this;
-       containerEl.empty();
+    display(): void {
+        const { containerEl } = this;
+        containerEl.empty();
 
-       new Setting(containerEl)
-           .setName('Show Delay')
-           .setDesc('How long to wait before showing the scrollbar (in milliseconds)')
-           .addText(text => text
-               .setValue(String(this.plugin.settings.showDelay))
-               .onChange(async (value) => {
-                   const delay = Number(value);
-                   if (!isNaN(delay) && delay >= 0) {
-                       this.plugin.settings.showDelay = delay;
-                       await this.plugin.saveSettings();
-                   }
-               }));
+        new Setting(containerEl)
+            .setName('Show Delay')
+            .setDesc('How long to wait before showing the scrollbar (in milliseconds)')
+            .addText(text => text
+                .setValue(String(this.plugin.settings.showDelay))
+                .onChange(async (value) => {
+                    const delay = Number(value);
+                    if (!isNaN(delay) && delay >= 0) {
+                        this.plugin.settings.showDelay = delay;
+                        await this.plugin.saveSettings();
+                    }
+                }));
 
-       new Setting(containerEl)
-           .setName('Hide Delay')
-           .setDesc('How long to keep the scrollbar visible after scrolling stops (in milliseconds)')
-           .addText(text => text
-               .setValue(String(this.plugin.settings.hideDelay))
-               .onChange(async (value) => {
-                   const delay = Number(value);
-                   if (!isNaN(delay) && delay > 0) {
-                       this.plugin.settings.hideDelay = delay;
-                       await this.plugin.saveSettings();
-                   }
-               }));
+        new Setting(containerEl)
+            .setName('Hide Delay')
+            .setDesc('How long to keep the scrollbar visible after scrolling stops (in milliseconds)')
+            .addText(text => text
+                .setValue(String(this.plugin.settings.hideDelay))
+                .onChange(async (value) => {
+                    const delay = Number(value);
+                    if (!isNaN(delay) && delay > 0) {
+                        this.plugin.settings.hideDelay = delay;
+                        await this.plugin.saveSettings();
+                    }
+                }));
 
-       new Setting(containerEl)
-           .setName('Scrollbar Color')
-           .setDesc('Color of the scrollbar (hex code)')
-           .addText(text => text
-               .setValue(this.plugin.settings.color)
-               .onChange(async (value) => {
-                   if (value.match(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/)) {
-                       this.plugin.settings.color = value;
-                       await this.plugin.saveSettings();
-                   }
-               }));
+        new Setting(containerEl)
+            .setName('Scrollbar Color')
+            .setDesc('Custom color (hex value) for the scrollbar (leave empty to use theme accent color)')
+            .addText(text => text
+                .setValue(this.plugin.settings.color || '')
+                .setPlaceholder('Theme accent color')
+                .onChange(async (value) => {
+                    if (!value.trim()) {
+                        this.plugin.settings.color = null;
+                        await this.plugin.saveSettings();
+                        return;
+                    }
 
-       new Setting(containerEl)
-           .setName('Scrollbar Width')
-           .setDesc('Width of the scrollbar in pixels')
-           .addText(text => text
-               .setValue(String(this.plugin.settings.width))
-               .onChange(async (value) => {
-                   const width = Number(value);
-                   if (!isNaN(width) && width > 0) {
-                       this.plugin.settings.width = width;
-                       await this.plugin.saveSettings();
-                   }
-               }));
-   }
+                    try {
+                        const temp = document.createElement('div');
+                        temp.style.color = value;
+                        document.body.appendChild(temp);
+                        const computedColor = getComputedStyle(temp).color;
+                        document.body.removeChild(temp);
+                        
+                        this.plugin.settings.color = value;
+                        await this.plugin.saveSettings();
+                    } catch (e) {
+                        console.log('Invalid color value:', value);
+                    }
+                }));
+    }
 }
 
 export default class AutoShowScrollbarsPlugin extends Plugin {
-   private scrollPlugin: ScrollPlugin;
-   settings: ScrollbarSettings;
+    private scrollPlugin: ScrollPlugin;
+    settings: ScrollbarSettings;
 
-   async onload() {
-       await this.loadSettings();
-       
-       const workspace = this.app.workspace;
-       this.scrollPlugin = new ScrollPlugin(workspace, this.settings);
-       
-       this.addSettingTab(new ScrollbarSettingTab(this.app, this));
-   }
+    async onload() {
+        await this.loadSettings();
+        
+        const workspace = this.app.workspace;
+        this.scrollPlugin = new ScrollPlugin(workspace, this.settings);
+        
+        this.addSettingTab(new ScrollbarSettingTab(this.app, this));
+    }
 
-   async loadSettings() {
-       this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
-   }
+    async loadSettings() {
+        this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+    }
 
-   async saveSettings() {
-       await this.saveData(this.settings);
-       this.scrollPlugin.updateSettings(this.settings);
-   }
+    async saveSettings() {
+        await this.saveData(this.settings);
+        this.scrollPlugin.updateSettings(this.settings);
+    }
 
-   onunload() {
-       this.scrollPlugin?.destroy();
-   }
+    onunload() {
+        this.scrollPlugin?.destroy();
+    }
 }
