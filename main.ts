@@ -1,86 +1,97 @@
 import { App, Plugin, PluginSettingTab, Setting, WorkspaceLeaf } from 'obsidian';
 
 interface ScrollbarSettings {
-   hideDelay: number;
-   showDelay: number;
-   color: string;
-   width: number;
+    hideDelay: number;
+    showDelay: number;
+    color: string;
+    width: number;
 }
 
 const DEFAULT_SETTINGS: ScrollbarSettings = {
-   hideDelay: 750,
-   showDelay: 0,
-   color: '#6790E3',
-   width: 8
+    hideDelay: 750,
+    showDelay: 0,
+    color: '#6790E3',
+    width: 8
 }
 
 export class ScrollPlugin {
-   private containers: Set<HTMLElement> = new Set();
-   private timeouts: Map<HTMLElement, number> = new Map();
-   private boundHandleScroll: (e: Event) => void;
-   private settings: ScrollbarSettings;
+    private boundHandleScroll: (e: Event) => void;
+    private settings: ScrollbarSettings;
+    private timeouts: WeakMap<Element, number> = new WeakMap();
 
-   constructor(workspace: any, settings: ScrollbarSettings) {
-       this.settings = settings;
-       this.boundHandleScroll = this.handleScroll.bind(this);
-       this.initForWorkspace(workspace);
-   }
+    constructor(workspace: any, settings: ScrollbarSettings) {
+        this.settings = settings;
+        this.boundHandleScroll = this.handleScroll.bind(this);
+        this.initForWorkspace();
+    }
 
-   public updateSettings(settings: ScrollbarSettings): void {
-       this.settings = settings;
-       this.updateStyles();
-   }
+    public updateSettings(settings: ScrollbarSettings): void {
+        this.settings = settings;
+        this.updateStyles();
+    }
 
-   private updateStyles(): void {
-       document.documentElement.style.setProperty('--scrollbar-width', `${this.settings.width}px`);
-       document.documentElement.style.setProperty('--scrollbar-color', this.settings.color);
-   }
+    private updateStyles(): void {
+        document.documentElement.style.setProperty('--scrollbar-width', `${this.settings.width}px`);
+        document.documentElement.style.setProperty('--scrollbar-color', this.settings.color);
+    }
 
-   private initForWorkspace(workspace: any): void {
-       this.updateStyles();
-       workspace.iterateAllLeaves((leaf: WorkspaceLeaf) => {
-           const view = leaf.view.containerEl;
-           const contentContainers = view.querySelectorAll('.cm-scroller, .markdown-preview-view');
-           contentContainers.forEach((container: HTMLElement) => this.addContainer(container));
-       });
-       
-       // Add modal and sidebar containers
-const modalContainers = document.querySelectorAll('.mod-settings .modal-content, .mod-sidebar-layout .vertical-tabs-container, .community-modal .vertical-tab-content-container, .vertical-tab-header');   }
+    private initForWorkspace(): void {
+        this.updateStyles();
+        document.body.classList.add('auto-hide-scrollbar');
+        
+        // Use capture phase to catch all scroll events
+        document.addEventListener('scroll', this.boundHandleScroll, { 
+            capture: true,
+            passive: true 
+        });
+    }
 
-   private addContainer(container: HTMLElement): void {
-       container.classList.add('auto-hide-scrollbar');
-       container.addEventListener('scroll', this.boundHandleScroll);
-       this.containers.add(container);
-   }
+    private handleScroll(e: Event): void {
+        if (!e.target || !(e.target instanceof Element)) return;
+        
+        const container = e.target;
+        const timeoutId = this.timeouts.get(container);
+        
+        if (timeoutId) {
+            window.clearTimeout(timeoutId);
+        }
 
-   private handleScroll(e: Event): void {
-       const container = e.target as HTMLElement;
-       const existingTimeout = this.timeouts.get(container);
-       if (existingTimeout) window.clearTimeout(existingTimeout);
-       
-       setTimeout(() => {
-           container.classList.add('scrolling');
-       }, this.settings.showDelay);
-       
-       const hideTimeout = window.setTimeout(() => {
-           container.classList.remove('scrolling');
-       }, this.settings.hideDelay + this.settings.showDelay);
-       
-       this.timeouts.set(container, hideTimeout);
-   }
+        // Add scrolling class after delay
+        if (this.settings.showDelay > 0) {
+            setTimeout(() => {
+                container.classList.add('scrolling');
+            }, this.settings.showDelay);
+        } else {
+            container.classList.add('scrolling');
+        }
 
-   public destroy(): void {
-       this.containers.forEach(container => {
-           container.removeEventListener('scroll', this.boundHandleScroll);
-           container.classList.remove('auto-hide-scrollbar');
-           const timeout = this.timeouts.get(container);
-           if (timeout) window.clearTimeout(timeout);
-       });
-       this.containers.clear();
-       this.timeouts.clear();
-   }
+        // Set timeout to remove scrolling class
+        const newTimeoutId = window.setTimeout(() => {
+            container.classList.remove('scrolling');
+            this.timeouts.delete(container);
+        }, this.settings.hideDelay + this.settings.showDelay);
+
+        this.timeouts.set(container, newTimeoutId);
+    }
+
+    public destroy(): void {
+        document.body.classList.remove('auto-hide-scrollbar');
+        document.removeEventListener('scroll', this.boundHandleScroll, true);
+        
+        // Clear all timeouts
+        document.querySelectorAll('.scrolling').forEach(el => {
+            el.classList.remove('scrolling');
+            const timeoutId = this.timeouts.get(el);
+            if (timeoutId) {
+                window.clearTimeout(timeoutId);
+            }
+        });
+        
+        // Remove CSS variables
+        document.documentElement.style.removeProperty('--scrollbar-width');
+        document.documentElement.style.removeProperty('--scrollbar-color');
+    }
 }
-
 export class ScrollbarSettingTab extends PluginSettingTab {
    plugin: AutoShowScrollbarsPlugin;
 
