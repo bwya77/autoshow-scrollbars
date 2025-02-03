@@ -1,64 +1,61 @@
-# AutoFit Tabs for Obsidian
+# auto-show Scrollbars for Obsidian
 
-Automatically adjusts tab header widths in real-time to perfectly fit each tab's title content while maintaining a clean, seamless interface that prevents awkward text truncation and ensures optimal readability of your document titles.
+Automatically hides scrollbars when not in use while keeping them easily accessible during scrolling, creating a clean, distraction-free reading experience without sacrificing navigation functionality.
 
 ![Demo video](/images/demo.gif) 
 
 ## Features
 
-- **Dynamic Width Adjustment**: Tabs automatically resize to fit their content
-- **Smooth Transitions**: Clean animations when tabs are resized
-- **Space Optimization**: No more truncated titles or wasted space
-- **Highly Customizable**: Fine-tune every aspect of tab appearance
-- **Resource Efficient**: Uses caching to minimize performance impact
-- **Clean Interface**: Maintains Obsidian's sleek look and feel
+- **Smart Auto-Hiding**: Scrollbars automatically hide when not in use
+- **Instant Access**: Scrollbars appear immediately when scrolling starts
+- **Hover Detection**: Show scrollbars when hovering over their area
+- **Theme Integration**: Uses your theme's accent color by default
+- **Smooth Animations**: Clean transitions for showing/hiding
+- **Resource Efficient**: Uses passive event listeners and CSS transitions
 
 ## Installation
 
 1. Open Obsidian Settings
 2. Navigate to Community Plugins and disable Safe Mode
-3. Click Browse and search for "AutoFit Tabs"
+3. Click Browse and search for "autoshow Scrollbars"
 4. Install the plugin
 5. Enable the plugin in your Community Plugins list
 
 ### Manual Installation
 
 1. Download the latest release from the releases page
-2. Extract the files into your vault's `.obsidian/plugins/autofit-tabs/` directory
+2. Extract the files into your vault's `.obsidian/plugins/autoshow-scrollbars/` directory
 3. Reload Obsidian
 4. Enable the plugin in your Community Plugins list
 
 ## Usage
 
-Once installed and enabled, AutoFit Tabs works automatically with no additional configuration needed. The plugin will immediately begin adjusting your tab widths to fit their content.
+Once installed and enabled, AutoShow Scrollbars works automatically with no additional configuration needed. The plugin will immediately begin managing your scrollbars according to your interaction.
 
 ### Configuration
 
 You can customize the following settings in the plugin options:
 
-![Plugin Settings](/images/settings.png) 
+![Plugin Settings](/images/autoshow_settings.png) 
 
-- **Minimum Width**: Set the smallest allowed width for tabs (default: 40px)
-- **Close Button Width**: Adjust the width of the tab close button (default: 28px)
-- **Left Padding**: Set the padding before the tab icon (default: 12px)
-- **Icon Right Margin**: Set the space between icon and text (default: 0px)
-- **Close Button Padding**: Adjust the space before the close button (default: 10px)
-- **Transition Duration**: Set how fast tabs animate when resizing (default: 315ms)
+- **Show Delay**: How long to wait before showing scrollbars when scrolling starts (default: 0ms)
+- **Hide Delay**: How long scrollbars remain visible after scrolling stops (default: 750ms)
+- **Scrollbar Color**: Custom color override for scrollbars (default: uses theme accent)
 
 ## Compatibility
 
-- Requires Obsidian v0.15.0 or higher
-- Desktop only (not available for mobile)
+- Requires Obsidian v1.0.0 or higher
+- Works on all platforms (Windows, macOS, Linux, iOS, Android)
 - Compatible with most themes and plugins
 
 ## Support
 
 If you find this plugin helpful, you can:
 
-- Star the repository on GitHub
-- Report any issues on the GitHub issue tracker
-- [Buy me a coffee](https://buymeacoffee.com/bwya77)
-- [Become a GitHub Sponsor](https://github.com/sponsors/bwya77)
+- Create an issue on [GitHub](https://github.com/bwya77/autoshow-scrollbars/issues)
+- Support the development:
+  - [Buy Me a Coffee](https://buymeacoffee.com/bwya77)
+  - [GitHub Sponsor](https://github.com/sponsors/bwya77)
 
 ## Development
 
@@ -73,12 +70,12 @@ Want to contribute or modify the plugin? Here's how to get started with the sour
 
 2. Clone the repository:
    ```bash
-   git clone https://github.com/bwya77/autofit-tabs.git
+   git clone https://github.com/bwya77/autoshow-scrollbars.git
    ```
 
 3. Navigate to the plugin directory:
    ```bash
-   cd autofit-tabs
+   cd auto-show-scrollbars
    ```
 
 4. Install dependencies:
@@ -111,4 +108,4 @@ To test your modifications:
 
 ## License
 
-MIT License. See [LICENSE](https://github.com/bwya77/autofit-tabs/blob/main/LICENSE) for full text.
+MIT License. See [LICENSE](https://github.com/bwya77/autoshow-scrollbars/blob/main/LICENSE) for full text.
