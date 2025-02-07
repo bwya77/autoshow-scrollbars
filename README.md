@@ -1,6 +1,6 @@
 # auto-show Scrollbars for Obsidian
 
-Automatically hides scrollbars when not in use while keeping them easily accessible during scrolling, creating a clean, distraction-free reading experience without sacrificing navigation functionality.
+Automatically hides scrollbars, including when you have a mouse connected, when not in use, while keeping them easily accessible during scrolling, creating a clean, distraction-free reading experience without sacrificing navigation functionality. Obsidian has similar functionality when on a laptop with no mouse.
 
 ![Demo video](/images/demo.gif) 
 
